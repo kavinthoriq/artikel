@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panduan Komprehensif Membangun Arsitektur Micro-Frontend di 2026 | TechInsights</title>
+    <meta name="description" content="Pelajari bagaimana memecah aplikasi monolitik menjadi bagian-bagian yang lebih kecil, independen, dan mudah dikelola menggunakan pendekatan micro-frontend.">
+    
+    <!-- Open Graph Tags -->
+    <meta property="og:title" content="Membangun Arsitektur Micro-Frontend di 2026">
+    <meta property="og:description" content="Pelajari bagaimana memecah aplikasi monolitik menjadi bagian-bagian yang lebih kecil.">
+    <meta property="og:image" content="https://images.unsplash.com/photo-1555066931-4365d14bab8c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'ui-sans-serif', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
+                        mono: ['Fira Code', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'monospace'],
+                    },
+                    colors: {
+                        primary: {
+                            50: '#eef2ff',
+                            100: '#e0e7ff',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                            900: '#312e81',
+                        },
+                        dark: {
+                            bg: '#0f172a',
+                            card: '#1e293b',
+                            text: '#f8fafc',
+                            muted: '#94a3b8'
+                        }
+                    },
+                    typography: (theme) => ({
+                        DEFAULT: {
+                            css: {
+                                color: theme('colors.slate.700'),
+                                a: {
+                                    color: theme('colors.primary.600'),
+                                    '&:hover': {
+                                        color: theme('colors.primary.700'),
+                                    },
+                                },
+                                h1: { color: theme('colors.slate.900') },
+                                h2: { color: theme('colors.slate.900') },
+                                h3: { color: theme('colors.slate.900') },
+                                h4: { color: theme('colors.slate.900') },
+                                strong: { color: theme('colors.slate.900') },
+                                code: { color: theme('colors.primary.600') },
+                                blockquote: {
+                                    borderLeftColor: theme('colors.primary.500'),
+                                    color: theme('colors.slate.600'),
+                                },
+                            },
+                        },
+                        dark: {
+                            css: {
+                                color: theme('colors.slate.300'),
+                                a: {
+                                    color: theme('colors.primary.400'),
+                                    '&:hover': {
+                                        color: theme('colors.primary.300'),
+                                    },
+                                },
+                                h1: { color: theme('colors.white') },
+                                h2: { color: theme('colors.white') },
+                                h3: { color: theme('colors.white') },
+                                h4: { color: theme('colors.white') },
+                                strong: { color: theme('colors.white') },
+                                code: { color: theme('colors.primary.400') },
+                                blockquote: {
+                                    borderLeftColor: theme('colors.primary.500'),
+                                    color: theme('colors.slate.400'),
+                                },
+                            },
+                        },
+                    }),
+                }
+            }
+        }
+    </script>
+    <!-- Include Tailwind Typography Plugin via CDN -->
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-slate-50 text-slate-900 dark:bg-dark-bg dark:text-dark-text transition-colors duration-300 font-sans antialiased">
+
+    <!-- Reading Progress Bar -->
+    <div id="reading-progress" class="fixed top-0 left-0 h-1 bg-primary-600 z-[60] w-0 transition-all duration-150"></div>
+
+    <!-- Header will be generated by JS or included here -->
+    <header class="fixed w-full top-0 z-50 bg-white/80 dark:bg-dark-card/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 transition-colors duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
+                <div class="flex-shrink-0 flex items-center">
+                    <a href="index.html" class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary-600 to-indigo-500 dark:from-primary-400 dark:to-indigo-300 tracking-tight">
+                        TechInsights.
+                    </a>
+                </div>
+                
+                <!-- Desktop Menu -->
+                <nav class="hidden md:flex space-x-8 items-center">
+                    <a href="index.html" class="text-slate-600 hover:text-primary-600 dark:text-slate-300 dark:hover:text-primary-400 font-medium transition-colors">Home</a>
+                    <a href="articles.html" class="text-slate-600 hover:text-primary-600 dark:text-slate-300 dark:hover:text-primary-400 font-medium transition-colors">Articles</a>
+                    <a href="index.html#categories" class="text-slate-600 hover:text-primary-600 dark:text-slate-300 dark:hover:text-primary-400 font-medium transition-colors">Categories</a>
+                    <a href="index.html#footer" class="text-slate-600 hover:text-primary-600 dark:text-slate-300 dark:hover:text-primary-400 font-medium transition-colors">About</a>
+                    
+                    <div class="border-l border-slate-300 dark:border-slate-700 h-6 mx-2"></div>
+                    
+                    <!-- Search Icon -->
+                    <button onclick="window.location.href='articles.html?focus=search'" class="text-slate-500 hover:text-primary-600 dark:text-slate-400 transition-colors" aria-label="Search">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                    </button>
+                    
+                    <!-- Dark Mode Toggle -->
+                    <button id="theme-toggle" class="p-2 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 transition-all focus:outline-none">
+                        <svg id="theme-toggle-light-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
+                        <svg id="theme-toggle-dark-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+                    </button>
+                </nav>
+
+                <!-- Mobile menu button -->
+                <div class="md:hidden flex items-center">
+                    <button id="mobile-menu-btn" class="text-slate-500 hover:text-slate-900 dark:text-slate-400 focus:outline-none">
+                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Mobile Menu Panel -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white dark:bg-dark-card border-b border-slate-200 dark:border-slate-800">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="index.html" class="block px-3 py-2 rounded-md text-base font-medium text-slate-700 dark:text-slate-300">Home</a>
+                <a href="articles.html" class="block px-3 py-2 rounded-md text-base font-medium text-slate-700 dark:text-slate-300">Articles</a>
+                <a href="index.html#categories" class="block px-3 py-2 rounded-md text-base font-medium text-slate-700 dark:text-slate-300">Categories</a>
+                <a href="index.html#footer" class="block px-3 py-2 rounded-md text-base font-medium text-slate-700 dark:text-slate-300">About</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="pt-24 pb-20">
+        <article class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <!-- Article Header -->
+            <header class="max-w-3xl mx-auto text-center mb-10 mt-8">
+                <div class="flex items-center justify-center gap-3 mb-6">
+                    <a href="#" class="px-3 py-1 bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-400 text-xs font-bold rounded-full uppercase tracking-wider hover:bg-primary-200 dark:hover:bg-primary-900/50 transition-colors">Architecture</a>
+                    <span class="text-slate-400">•</span>
+                    <span class="text-sm text-slate-500 dark:text-slate-400 flex items-center">
+                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        8 min read
+                    </span>
+                </div>
+                
+                <h1 class="text-3xl md:text-5xl font-extrabold text-slate-900 dark:text-white leading-tight mb-8">
+                    Panduan Komprehensif Membangun Arsitektur Micro-Frontend di 2026
+                </h1>
+                
+                <div class="flex flex-col sm:flex-row items-center justify-center gap-6 border-y border-slate-200 dark:border-slate-800 py-6">
+                    <div class="flex items-center">
+                        <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="Budi Santoso" class="w-12 h-12 rounded-full border-2 border-primary-100 dark:border-primary-900">
+                        <div class="ml-4 text-left">
+                            <p class="text-base font-bold text-slate-900 dark:text-white">Budi Santoso</p>
+                            <p class="text-sm text-slate-500 dark:text-slate-400">Senior Staff Engineer</p>
+                        </div>
+                    </div>
+                    <div class="hidden sm:block w-px h-10 bg-slate-200 dark:bg-slate-800"></div>
+                    <div class="text-left text-sm text-slate-500 dark:text-slate-400">
+                        <p>Dipublikasikan</p>
+                        <p class="font-medium text-slate-900 dark:text-white">9 Mei 2026</p>
+                    </div>
+                    
+                    <!-- Share Buttons -->
+                    <div class="flex items-center gap-3 ml-auto">
+                        <button class="p-2 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-blue-500 dark:hover:text-blue-400 transition-colors" aria-label="Share on Twitter">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84"/></svg>
+                        </button>
+                        <button class="p-2 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-blue-700 dark:hover:text-blue-500 transition-colors" aria-label="Share on LinkedIn">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" clip-rule="evenodd"/></svg>
+                        </button>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Featured Image -->
+            <div class="max-w-5xl mx-auto mb-16 rounded-2xl overflow-hidden shadow-2xl">
+                <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" alt="Micro-Frontend Architecture" class="w-full h-auto object-cover max-h-[600px]">
+            </div>
+
+            <div class="flex flex-col lg:flex-row gap-12 relative">
+                
+                <!-- Sticky Table of Contents (Desktop) -->
+                <aside class="hidden lg:block w-64 flex-shrink-0">
+                    <div class="sticky top-28 bg-white dark:bg-dark-card rounded-xl shadow-sm dark:border dark:border-slate-800 p-6">
+                        <h4 class="font-bold text-slate-900 dark:text-white mb-4 uppercase tracking-wider text-sm">Daftar Isi</h4>
+                        <ul class="space-y-3 text-sm text-slate-600 dark:text-slate-400 toc-menu">
+                            <li><a href="#pendahuluan" class="hover:text-primary-600 dark:hover:text-primary-400 block transition-colors">Pendahuluan</a></li>
+                            <li><a href="#apa-itu-micro-frontend" class="hover:text-primary-600 dark:hover:text-primary-400 block transition-colors">Apa itu Micro-Frontend?</a></li>
+                            <li><a href="#kenapa-harus-migrasi" class="hover:text-primary-600 dark:hover:text-primary-400 block transition-colors">Kenapa Harus Migrasi?</a></li>
+                            <li><a href="#arsitektur-teknis" class="hover:text-primary-600 dark:hover:text-primary-400 block transition-colors ml-4">Arsitektur Teknis</a></li>
+                            <li><a href="#module-federation" class="hover:text-primary-600 dark:hover:text-primary-400 block transition-colors ml-4">Webpack Module Federation</a></li>
+                            <li><a href="#implementasi-kode" class="hover:text-primary-600 dark:hover:text-primary-400 block transition-colors">Implementasi Kode</a></li>
+                            <li><a href="#kesimpulan" class="hover:text-primary-600 dark:hover:text-primary-400 block transition-colors">Kesimpulan</a></li>
+                        </ul>
+                    </div>
+                </aside>
+
+                <!-- Article Content -->
+                <div class="flex-grow max-w-3xl prose prose-slate prose-lg dark:prose-dark lg:prose-xl mx-auto lg:mx-0">
+                    <p id="pendahuluan" class="lead">
+                        Seiring berkembangnya ukuran tim dan kompleksitas aplikasi web, arsitektur monolitik frontend seringkali menjadi botol leher (bottleneck). Di sinilah Micro-Frontend hadir sebagai penyelamat.
+                    </p>
+
+                    <h2 id="apa-itu-micro-frontend">Apa itu Micro-Frontend?</h2>
+                    <p>
+                        Istilah <strong>Micro-Frontend</strong> pertama kali muncul pada akhir 2016. Konsep ini pada dasarnya adalah perpanjangan dari prinsip <em>microservices</em> yang diterapkan pada dunia frontend. Alih-alih memiliki satu <em>codebase</em> besar yang dikelola oleh semua tim, aplikasi dibagi menjadi fitur-fitur independen.
+                    </p>
+
+                    <blockquote>
+                        "Micro-frontends are an architectural style where independently deliverable frontend applications are composed into a greater whole." - Cam Jackson, MartinFowler.com
+                    </blockquote>
+
+                    <h2 id="kenapa-harus-migrasi">Kenapa Harus Migrasi?</h2>
+                    <p>
+                        Jika Anda bekerja dalam tim kecil dengan proyek yang relatif sederhana, monolitik mungkin adalah pilihan terbaik. Namun, ketika jumlah engineer melebihi 20 orang dan mereka mengerjakan bagian aplikasi yang sama, masalah mulai muncul:
+                    </p>
+                    <ul>
+                        <li><strong>Deploy conflicts:</strong> Satu bug kecil dapat menggagalkan deploy seluruh aplikasi.</li>
+                        <li><strong>Tech stack lock-in:</strong> Sulit untuk mencoba teknologi baru (misal: migrasi dari React 16 ke 18) karena harus mengubah seluruh aplikasi.</li>
+                        <li><strong>Slow builds:</strong> Waktu <em>build</em> dan CI/CD menjadi sangat lambat (bisa mencapai >30 menit).</li>
+                    </ul>
+
+                    <h3 id="arsitektur-teknis">Arsitektur Teknis</h3>
+                    <p>
+                        Ada beberapa pendekatan untuk mengimplementasikan micro-frontend, mulai dari iframe, NGINX routing, hingga pendekatan modern berbasis JavaScript.
+                    </p>
+                    
+                    <h3 id="module-federation">Webpack Module Federation</h3>
+                    <p>
+                        Sejak rilis Webpack 5, <strong>Module Federation</strong> menjadi standar de-facto untuk membangun micro-frontend. Fitur ini memungkinkan beberapa build JavaScript (aplikasi terpisah) untuk saling membagikan modul secara dinamis pada saat <em>runtime</em>.
+                    </p>
+
+                    <h2 id="implementasi-kode">Contoh Implementasi Kode</h2>
+                    <p>
+                        Berikut adalah konfigurasi dasar <code>webpack.config.js</code> untuk aplikasi <strong>Host</strong> (yang membungkus aplikasi lain):
+                    </p>
+
+<pre><code class="language-javascript">const ModuleFederationPlugin = require("webpack/lib/container/ModuleFederationPlugin");
+
+module.exports = {
+  plugins: [
+    new ModuleFederationPlugin({
+      name: "host_app",
+      remotes: {
+        cart: "cart@http://localhost:3002/remoteEntry.js",
+        products: "products@http://localhost:3001/remoteEntry.js",
+      },
+      shared: ["react", "react-dom"],
+    }),
+  ],
+};</code></pre>
+
+                    <p>
+                        Dan berikut adalah konfigurasi untuk aplikasi <strong>Remote</strong> (misalnya aplikasi Keranjang/Cart):
+                    </p>
+
+<pre><code class="language-javascript">const ModuleFederationPlugin = require("webpack/lib/container/ModuleFederationPlugin");
+
+module.exports = {
+  plugins: [
+    new ModuleFederationPlugin({
+      name: "cart",
+      filename: "remoteEntry.js",
+      exposes: {
+        "./CartWidget": "./src/components/CartWidget",
+      },
+      shared: ["react", "react-dom"],
+    }),
+  ],
+};</code></pre>
+
+                    <p>
+                        Dengan konfigurasi di atas, aplikasi <strong>Host</strong> dapat me-render komponen <code>CartWidget</code> seolah-olah itu adalah komponen lokal, padahal dikembangkan dan di-deploy secara terpisah oleh tim yang berbeda.
+                    </p>
+
+                    <h2 id="kesimpulan">Kesimpulan</h2>
+                    <p>
+                        Micro-Frontend bukanlah <em>silver bullet</em> (solusi ajaib untuk semua masalah). Ia datang dengan kompleksitas infrastruktur tambahan. Pastikan masalah yang Anda hadapi adalah masalah organisasi dan skalabilitas tim, bukan sekadar mengikuti tren teknologi terbaru.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Author Bio Box -->
+            <div class="max-w-3xl mx-auto mt-16 bg-slate-100 dark:bg-slate-800/50 rounded-2xl p-8 border border-slate-200 dark:border-slate-700">
+                <div class="flex flex-col sm:flex-row items-center sm:items-start gap-6">
+                    <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="Budi Santoso" class="w-24 h-24 rounded-full shadow-md">
+                    <div class="text-center sm:text-left">
+                        <h3 class="text-xl font-bold text-slate-900 dark:text-white">Ditulis oleh Budi Santoso</h3>
+                        <p class="text-primary-600 dark:text-primary-400 font-medium text-sm mb-3">Senior Staff Engineer @ TechCorp</p>
+                        <p class="text-slate-600 dark:text-slate-400 text-sm md:text-base">
+                            Budi memiliki pengalaman lebih dari 10 tahun di industri perangkat lunak. Spesialis di bidang arsitektur frontend dan performa web skala enterprise.
+                        </p>
+                        <div class="flex items-center justify-center sm:justify-start gap-4 mt-4">
+                            <a href="#" class="text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84"/></svg></a>
+                            <a href="#" class="text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd"/></svg></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Related Articles -->
+            <div class="mt-20 pt-16 border-t border-slate-200 dark:border-slate-800">
+                <h3 class="text-2xl font-bold text-slate-900 dark:text-white mb-8 text-center">Baca Artikel Lainnya</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Article Card 2 (from articles.html) -->
+                    <article class="flex flex-col bg-white dark:bg-dark-card rounded-2xl overflow-hidden shadow-lg dark:shadow-none dark:border dark:border-slate-800 transition-all hover:-translate-y-1">
+                        <div class="aspect-w-16 aspect-h-9 relative overflow-hidden group">
+                            <img src="https://images.unsplash.com/photo-1633356122544-f134324a6cee?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Thumbnail" class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500">
+                        </div>
+                        <div class="p-6">
+                            <a href="#" class="block mb-2">
+                                <h3 class="text-xl font-bold text-slate-900 dark:text-white leading-tight hover:text-primary-600 dark:hover:text-primary-400">
+                                    Memilih Antara React dan Vue untuk Project Enterprise
+                                </h3>
+                            </a>
+                            <p class="text-slate-600 dark:text-slate-400 text-sm line-clamp-2">Analisis mendalam tentang kelebihan, kekurangan, dan performa kedua framework.</p>
+                        </div>
+                    </article>
+
+                    <!-- Article Card 3 (from articles.html) -->
+                    <article class="flex flex-col bg-white dark:bg-dark-card rounded-2xl overflow-hidden shadow-lg dark:shadow-none dark:border dark:border-slate-800 transition-all hover:-translate-y-1">
+                        <div class="aspect-w-16 aspect-h-9 relative overflow-hidden group">
+                            <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Thumbnail" class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500">
+                        </div>
+                        <div class="p-6">
+                            <a href="#" class="block mb-2">
+                                <h3 class="text-xl font-bold text-slate-900 dark:text-white leading-tight hover:text-primary-600 dark:hover:text-primary-400">
+                                    Optimasi Core Web Vitals: Rahasia Skor 100 di Lighthouse
+                                </h3>
+                            </a>
+                            <p class="text-slate-600 dark:text-slate-400 text-sm line-clamp-2">Teknik tingkat lanjut untuk memperbaiki LCP, FID, dan CLS.</p>
+                        </div>
+                    </article>
+
+                    <article class="flex flex-col bg-white dark:bg-dark-card rounded-2xl overflow-hidden shadow-lg dark:shadow-none dark:border dark:border-slate-800 transition-all hover:-translate-y-1 hidden lg:flex">
+                        <div class="aspect-w-16 aspect-h-9 relative overflow-hidden group">
+                            <img src="https://images.unsplash.com/photo-1507721999472-8ed4421c4af2?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Thumbnail" class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500">
+                        </div>
+                        <div class="p-6">
+                            <a href="#" class="block mb-2">
+                                <h3 class="text-xl font-bold text-slate-900 dark:text-white leading-tight hover:text-primary-600 dark:hover:text-primary-400">
+                                    Psikologi Warna dalam Desain User Interface
+                                </h3>
+                            </a>
+                            <p class="text-slate-600 dark:text-slate-400 text-sm line-clamp-2">Mempelajari bagaimana pilihan warna pada website mempengaruhi mood.</p>
+                        </div>
+                    </article>
+                </div>
+            </div>
+
+        </article>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white dark:bg-dark-card border-t border-slate-200 dark:border-slate-800 py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center">
+            <a href="index.html" class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary-600 to-indigo-500 dark:from-primary-400 dark:to-indigo-300">
+                TechInsights.
+            </a>
+            <p class="text-sm text-slate-500 mt-4 md:mt-0">&copy; 2026 TechInsights. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Back to top button -->
+    <button id="back-to-top" class="fixed bottom-8 right-8 p-3 rounded-full bg-primary-600 text-white shadow-lg opacity-0 translate-y-10 transition-all duration-300 focus:outline-none z-50">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
+        </svg>
+    </button>
+
+    <script src="js/main.js"></script>
+    <script>
+        // Reading Progress Bar Script specifically for article page
+        document.addEventListener('scroll', function() {
+            const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+            const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (scrollTop / scrollHeight) * 100;
+            document.getElementById('reading-progress').style.width = scrolled + '%';
+        });
+    </script>
+</body>
+</html>
